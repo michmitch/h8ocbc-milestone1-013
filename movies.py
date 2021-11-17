@@ -48,6 +48,101 @@ def read_one(directors_id, movies_id):
     else:
         abort(404, f"Movies not found for Id: {movies_id}")
 
+def read_one_movie_no_director_id(movies_id):
+    """
+    Fungsi ini me-return movie sesuai movie_id 
+    yang diberikan melalui url /api/movies/{movies_id}
+    dengan method get
+    Fungsi juga akan me-return status 200 jika ada datanya
+    dan akan melakukan abort dan status 404 jika tidak ada datanya
+    """
+    # Query join movies dan directors
+    movies = (
+        Movies.query.join(Directors, Directors.id == Movies.director_id)
+        .filter(Movies.id == movies_id)
+        .one_or_none()
+    )
+
+    # Cek movies apakah ada
+    if movies is not None:
+        movies_schema = MoviesSchema()
+        data = movies_schema.dump(movies)
+        return data, 200
+
+    # Return 404 jika tidak ada movies nya
+    else:
+        abort(404, f"Movies not found for Id: {movies_id}")
+
+def top_by_popularity(data_to_fetch):
+    """
+    Fungsi ini mengambil top movies berdasarkan popularity
+    Fungsi akan terpanggil melalui url /api/movies/top/popular/{data_to_fetch}
+    dengan method get
+    """
+    # Query untuk top movies by popularity diambil sesuai data_to_fetch
+    movies = Movies.query.order_by(db.desc(Movies.popularity)).limit(data_to_fetch)
+
+    # Serialize list dari hasil query
+    movies_schema = MoviesSchema(many=True)
+    data = movies_schema.dump(movies)
+    return data
+
+def top_by_revenue(data_to_fetch):
+    """
+    Fungsi ini mengambil top movies berdasarkan revenue
+    Fungsi akan terpanggil melalui url /api/movies/top/revenue/{data_to_fetch}
+    dengan method get
+    """
+    # Query untuk top movies by popularity diambil sesuai data_to_fetch
+    movies = Movies.query.order_by(db.desc(Movies.revenue)).limit(data_to_fetch)
+
+    # Serialize list dari hasil query
+    movies_schema = MoviesSchema(many=True)
+    data = movies_schema.dump(movies)
+    return data
+
+def top_by_vote_avg(data_to_fetch):
+    """
+    Fungsi ini mengambil top movies berdasarkan vote_average
+    Fungsi akan terpanggil melalui url /api/movies/top/voteavg/{data_to_fetch}
+    dengan method get
+    """
+    # Query untuk top movies by popularity diambil sesuai data_to_fetch
+    movies = Movies.query.order_by(db.desc(Movies.vote_average)).limit(data_to_fetch)
+
+    # Serialize list dari hasil query
+    movies_schema = MoviesSchema(many=True)
+    data = movies_schema.dump(movies)
+    return data
+
+def top_by_vote_count(data_to_fetch):
+    """
+    Fungsi ini mengambil top movies berdasarkan vote_count
+    Fungsi akan terpanggil melalui url /api/movies/top/votecount/{data_to_fetch}
+    dengan method get
+    """
+    # Query untuk top movies by popularity diambil sesuai data_to_fetch
+    movies = Movies.query.order_by(db.desc(Movies.vote_count)).limit(data_to_fetch)
+
+    # Serialize list dari hasil query
+    movies_schema = MoviesSchema(many=True)
+    data = movies_schema.dump(movies)
+    return data
+
+def top_by_budget(data_to_fetch):
+    """
+    Fungsi ini mengambil top movies berdasarkan budget
+    Fungsi akan terpanggil melalui url /api/movies/top/budget/{data_to_fetch}
+    dengan method get
+    """
+    # Query untuk top movies by popularity diambil sesuai data_to_fetch
+    movies = Movies.query.order_by(db.desc(Movies.budget)).limit(data_to_fetch)
+
+    # Serialize list dari hasil query
+    movies_schema = MoviesSchema(many=True)
+    data = movies_schema.dump(movies)
+    return data
+
 
 def create(directors_id, movies):
     """
