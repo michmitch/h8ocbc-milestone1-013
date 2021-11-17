@@ -27,8 +27,10 @@ def read_one(directors_id, movies_id):
     Fungsi ini me-return movie sesuai movie_id dan directors_id 
     yang diberikan melalui url /api/directors/{directors_id}/movies/{movies_id}
     dengan method get
+    Fungsi juga akan me-return status 200 jika ada datanya
+    dan akan melakukan abort dan status 404 jika tidak ada datanya
     """
-    # Query untuk movie sesuai director_id dan movie_id
+    # Query join movies dan directors
     movies = (
         Movies.query.join(Directors, Directors.id == Movies.director_id)
         .filter(Directors.id == directors_id)
@@ -36,40 +38,40 @@ def read_one(directors_id, movies_id):
         .one_or_none()
     )
 
-    # Cek movie apakah ada di database
+    # Cek movies apakah ada
     if movies is not None:
         movies_schema = MoviesSchema()
         data = movies_schema.dump(movies)
         return data, 200
 
-    # Return 404 jika tidak ketemu movie nya
+    # Return 404 jika tidak ada movies nya
     else:
         abort(404, f"Movies not found for Id: {movies_id}")
 
 
 def create(directors_id, movies):
     """
-    This function creates a new note related to the passed in person id.
-    :param person_id:       Id of the person the note is related to
-    :param note:            The JSON containing the note data
-    :return:                201 on success
+    Fungsi ini akan membuat data movies baru dengan directors_id sesuai dengan yang diberikan melalui
+    url /api/directors/{directors_id}/movies dengan method post
+    Request body nya berupa object movies tanpa atribut director_id dan id
+    Fungsi akan me-return data movies yang berhasil dibuat dan status code 201
     """
-    # get the parent person
+    # Ambil data director untuk dicek
     directors = Directors.query.filter(Directors.id == directors_id).one_or_none()
 
-    # Was a person found?
+    # Return 404 jika tidak ada directors
     if directors is None:
         abort(404, f"Director not found for Id: {directors}")
 
-    # Create a note schema instance
+    # # Create movies menggunakan schema
     schema = MoviesSchema()
     new_movies = schema.load(movies, session=db.session)
 
-    # Add the note to the person and database
+    # Add data ke database
     directors.movies.append(new_movies)
     db.session.commit()
 
-    # Serialize and return the newly created note in the response
+    # Ambil data yang berhasil di-create
     data = schema.dump(new_movies)
 
     return data, 201
@@ -77,59 +79,59 @@ def create(directors_id, movies):
 
 def update(directors_id, movies_id, movies):
     """
-    This function updates an existing note related to the passed in
-    person id.
-    :param person_id:       Id of the person the note is related to
-    :param note_id:         Id of the note to update
-    :param content:            The JSON containing the note data
-    :return:                200 on success
+    Fungsi ini akan melakukan update data movies dengan directors_id dan movies_id sesuai dengan yang diberikan melalui
+    url /api/directors/{directors_id}/movies/{movies_id} dengan method put
+    Request body nya berupa object movies tanpa atribut director_id dan id
+    Fungsi akan me-return data movies yang berhasil diupdate dan status code 200
+    dan fungsi akan melakukan abort dan status 404 jika data tidak ditemukan
     """
+    # Query untuk get data movies sesuai director_id dan id
     update_movies = (
         Movies.query.filter(Directors.id == directors_id)
         .filter(Movies.id == movies_id)
         .one_or_none()
     )
 
-    # Did we find an existing note?
+    # Cek apakah ada datanya
     if update_movies is not None:
 
-        # turn the passed in note into a db object
+        # Ambil datanya dan diubah dalam bentuk db object
         schema = MoviesSchema()
         update = schema.load(movies, session=db.session)
 
-        # Set the id's to the note we want to update
+        # Set director_id dan id sesuai dengan yang mau di-update
         update.director_id = update_movies.director_id
         update.id = update_movies.id
 
-        # merge the new object into the old and commit it to the db
+        # Update datanya
         db.session.merge(update)
         db.session.commit()
 
-        # return updated note in the response
+        # Ambil data yang berhasil di-update
         data = schema.dump(update_movies)
 
         return data, 200
 
-    # Otherwise, nope, didn't find that note
+    # Return 404 jika tidak ada movies nya
     else:
         abort(404, f"Movie not found for Id: {movies_id}")
 
 
 def delete(directors_id, movies_id):
     """
-    This function deletes a note from the note structure
-    :param person_id:   Id of the person the note is related to
-    :param note_id:     Id of the note to delete
-    :return:            200 on successful delete, 404 if not found
+    Fungsi ini akan melakukan delete data movies dengan directors_id dan movies_id sesuai dengan yang diberikan melalui
+    url /api/directors/{directors_id}/movies/{movies_id} dengan method delete
+    Fungsi akan me-return message dan status code 200 jika berhasil di-delete
+    dan fungsi akan melakukan abort dan status 404 jika data tidak ditemukan
     """
-    # Get the note requested
+    # Query untuk get data movies sesuai director_id dan id
     movies = (
         Movies.query.filter(Directors.id == directors_id)
         .filter(Movies.id == movies_id)
         .one_or_none()
     )
 
-    # did we find a note?
+    # Cek apakah ada datanya
     if movies is not None:
         db.session.delete(movies)
         db.session.commit()
@@ -137,6 +139,6 @@ def delete(directors_id, movies_id):
             f"Movie {movies_id} deleted", 200
         )
 
-    # Otherwise, nope, didn't find that note
+    # Return 404 jika tidak ada movies nya
     else:
         abort(404, f"Movie not found for Id: {movies_id}")
