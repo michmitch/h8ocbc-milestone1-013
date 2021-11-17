@@ -345,7 +345,450 @@ paths:
                     department:
                       type: string
                       description: Department of the director
-
+  /movies/{movies_id}:
+    get:
+      operationId: movies.read_one_movie_no_director_id
+      tags:
+        - Movies
+      summary: Read a particular movie associated with a director
+      description: Read a particular movie associated with a director
+      parameters:
+        - name: movies_id
+          in: path
+          description: Id of movie
+          type: integer
+          required: True
+      responses:
+        200:
+          description: Successfully read movie
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: Id of the movie
+              original_title:
+                type: string
+                description: Original Title of the movie
+              budget:
+                type: integer
+                description: Budget of the movie
+              popularity:
+                type: integer
+                description: Popularity of the movie
+              release_date:
+                type: string
+                description: Release Date of the movie
+              revenue:
+                type: integer
+                description: Revenue of the movie
+              title:
+                type: string
+                description: Title of the movie
+              vote_average:
+                type: number
+                description: Vote Average of the movie
+              vote_count:
+                type: integer
+                description: Vote Count of the movie
+              overview:
+                type: string
+                description: Overview of the movie
+              tagline:
+                type: string
+                description: Tagline of the movie
+              uid:
+                type: integer
+                description: UID of the movie
+              director_id:
+                type: integer
+                description: Director Id of the movie
+  /movies/top/popularity/{data_to_fetch}:
+    get:
+      operationId: movies.top_by_popularity
+      tags:
+        - Movies
+      summary: Get top movies by popularity
+      description: Get top movies by popularity
+      parameters:
+        - name: data_to_fetch
+          in: path
+          description: How many top popular movies to be fetched
+          type: integer
+          required: True
+      responses:
+        200:
+          description: Successfully get popular movies
+          schema:
+            type: array
+            items:
+              properties:
+                id:
+                  type: integer
+                  description: Id of the movie
+                original_title:
+                  type: string
+                  description: Content of the note
+                budget:
+                  type: integer
+                  description: Budget of the movie
+                popularity:
+                  type: integer
+                  description: Popularity of the movie
+                release_date:
+                  type: string
+                  description: Release Date of the movie
+                revenue:
+                  type: integer
+                  description: Revenue of the movie
+                title:
+                  type: string
+                  description: Title of the movie
+                vote_average:
+                  type: number
+                  description: Vote Average of the movie
+                vote_count:
+                  type: integer
+                  description: Vote Count of the movie
+                overview:
+                  type: string
+                  description: Overview of the movie
+                tagline:
+                  type: string
+                  description: Tagline of the movie
+                uid:
+                  type: integer
+                  description: UID of the movie
+                director_id:
+                  type: integer
+                  description: Director Id of the movie
+                directors:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Id of the director
+                    name:
+                      type: string
+                      description: Name of the director
+                    gender:
+                      type: integer
+                      description: Gender of the director
+                    uid:
+                      type: integer
+                      description: UID of the director
+                    department:
+                      type: string
+                      description: Department of the director
+  /movies/top/revenue/{data_to_fetch}:
+    get:
+      operationId: movies.top_by_revenue
+      tags:
+        - Movies
+      summary: Get the highest-grossing movies
+      description: Get the highest-grossing movies
+      parameters:
+        - name: data_to_fetch
+          in: path
+          description: How many highest-grossing movie to be fetched
+          type: integer
+          required: True
+      responses:
+        200:
+          description: Successfully get the highest-grossing movies
+          schema:
+            type: array
+            items:
+              properties:
+                id:
+                  type: integer
+                  description: Id of the movie
+                original_title:
+                  type: string
+                  description: Content of the note
+                budget:
+                  type: integer
+                  description: Budget of the movie
+                popularity:
+                  type: integer
+                  description: Popularity of the movie
+                release_date:
+                  type: string
+                  description: Release Date of the movie
+                revenue:
+                  type: integer
+                  description: Revenue of the movie
+                title:
+                  type: string
+                  description: Title of the movie
+                vote_average:
+                  type: number
+                  description: Vote Average of the movie
+                vote_count:
+                  type: integer
+                  description: Vote Count of the movie
+                overview:
+                  type: string
+                  description: Overview of the movie
+                tagline:
+                  type: string
+                  description: Tagline of the movie
+                uid:
+                  type: integer
+                  description: UID of the movie
+                director_id:
+                  type: integer
+                  description: Director Id of the movie
+                directors:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Id of the director
+                    name:
+                      type: string
+                      description: Name of the director
+                    gender:
+                      type: integer
+                      description: Gender of the director
+                    uid:
+                      type: integer
+                      description: UID of the director
+                    department:
+                      type: string
+                      description: Department of the director
+  /movies/top/voteavg/{data_to_fetch}:
+    get:
+      operationId: movies.top_by_vote_avg
+      tags:
+        - Movies
+      summary: Get movies with the highest vote average
+      description: Get movies with the highest vote average
+      parameters:
+        - name: data_to_fetch
+          in: path
+          description: How many top vote average movie to be fetched
+          type: integer
+          required: True
+      responses:
+        200:
+          description: Successfully get movies with the highest vote average
+          schema:
+            type: array
+            items:
+              properties:
+                id:
+                  type: integer
+                  description: Id of the movie
+                original_title:
+                  type: string
+                  description: Content of the note
+                budget:
+                  type: integer
+                  description: Budget of the movie
+                popularity:
+                  type: integer
+                  description: Popularity of the movie
+                release_date:
+                  type: string
+                  description: Release Date of the movie
+                revenue:
+                  type: integer
+                  description: Revenue of the movie
+                title:
+                  type: string
+                  description: Title of the movie
+                vote_average:
+                  type: number
+                  description: Vote Average of the movie
+                vote_count:
+                  type: integer
+                  description: Vote Count of the movie
+                overview:
+                  type: string
+                  description: Overview of the movie
+                tagline:
+                  type: string
+                  description: Tagline of the movie
+                uid:
+                  type: integer
+                  description: UID of the movie
+                director_id:
+                  type: integer
+                  description: Director Id of the movie
+                directors:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Id of the director
+                    name:
+                      type: string
+                      description: Name of the director
+                    gender:
+                      type: integer
+                      description: Gender of the director
+                    uid:
+                      type: integer
+                      description: UID of the director
+                    department:
+                      type: string
+                      description: Department of the director
+  /movies/top/votecount/{data_to_fetch}:
+    get:
+      operationId: movies.top_by_vote_count
+      tags:
+        - Movies
+      summary: Get the most voted movies
+      description: Get the most voted movies
+      parameters:
+        - name: data_to_fetch
+          in: path
+          description: How many top voted movies to be fetched
+          type: integer
+          required: True
+      responses:
+        200:
+          description: Successfully get the most voted movies
+          schema:
+            type: array
+            items:
+              properties:
+                id:
+                  type: integer
+                  description: Id of the movie
+                original_title:
+                  type: string
+                  description: Content of the note
+                budget:
+                  type: integer
+                  description: Budget of the movie
+                popularity:
+                  type: integer
+                  description: Popularity of the movie
+                release_date:
+                  type: string
+                  description: Release Date of the movie
+                revenue:
+                  type: integer
+                  description: Revenue of the movie
+                title:
+                  type: string
+                  description: Title of the movie
+                vote_average:
+                  type: number
+                  description: Vote Average of the movie
+                vote_count:
+                  type: integer
+                  description: Vote Count of the movie
+                overview:
+                  type: string
+                  description: Overview of the movie
+                tagline:
+                  type: string
+                  description: Tagline of the movie
+                uid:
+                  type: integer
+                  description: UID of the movie
+                director_id:
+                  type: integer
+                  description: Director Id of the movie
+                directors:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Id of the director
+                    name:
+                      type: string
+                      description: Name of the director
+                    gender:
+                      type: integer
+                      description: Gender of the director
+                    uid:
+                      type: integer
+                      description: UID of the director
+                    department:
+                      type: string
+                      description: Department of the director
+  /movies/top/budget/{data_to_fetch}:
+    get:
+      operationId: movies.top_by_budget
+      tags:
+        - Movies
+      summary: Get the most expensive movies
+      description: Get the most expensive movies
+      parameters:
+        - name: data_to_fetch
+          in: path
+          description: How many most expensive movies to be fetched
+          type: integer
+          required: True
+      responses:
+        200:
+          description: Successfully get the most expensive movies
+          schema:
+            type: array
+            items:
+              properties:
+                id:
+                  type: integer
+                  description: Id of the movie
+                original_title:
+                  type: string
+                  description: Content of the note
+                budget:
+                  type: integer
+                  description: Budget of the movie
+                popularity:
+                  type: integer
+                  description: Popularity of the movie
+                release_date:
+                  type: string
+                  description: Release Date of the movie
+                revenue:
+                  type: integer
+                  description: Revenue of the movie
+                title:
+                  type: string
+                  description: Title of the movie
+                vote_average:
+                  type: number
+                  description: Vote Average of the movie
+                vote_count:
+                  type: integer
+                  description: Vote Count of the movie
+                overview:
+                  type: string
+                  description: Overview of the movie
+                tagline:
+                  type: string
+                  description: Tagline of the movie
+                uid:
+                  type: integer
+                  description: UID of the movie
+                director_id:
+                  type: integer
+                  description: Director Id of the movie
+                directors:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Id of the director
+                    name:
+                      type: string
+                      description: Name of the director
+                    gender:
+                      type: integer
+                      description: Gender of the director
+                    uid:
+                      type: integer
+                      description: UID of the director
+                    department:
+                      type: string
+                      description: Department of the director
+  
 
   /directors/{directors_id}/movies:
     post:
