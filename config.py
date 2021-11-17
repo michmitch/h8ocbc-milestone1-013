@@ -5,19 +5,19 @@ from flask_marshmallow import Marshmallow
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Create the Connexion application instance
+# Untuk Connexion Instance 
 connex_app = connexion.App(__name__, specification_dir=basedir)
 
-# Get the underlying Flask app instance
+# Flask app di Connexion Instance nya
 app = connex_app.app
 
-# Configure the SQLAlchemy part of the app instance
+# Config SQL Alchemy untuk database
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'final_proj.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Create the SQLAlchemy db instance
+# Untuk SQLAlchemy Instance
 db = SQLAlchemy(app)
 
-# Initialize Marshmallow
+# Untuk Marshmallow Instance
 ma = Marshmallow(app)
