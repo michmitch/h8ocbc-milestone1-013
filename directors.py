@@ -1,6 +1,5 @@
 """
-This is the people module and supports all the REST actions for the
-people data
+Module directors yang berisi fungsi untuk endpoint REST API
 """
 
 from flask import make_response, abort
@@ -10,14 +9,14 @@ from models import Directors, DirectorsSchema, Movies
 
 def read_all():
     """
-    This function responds to a request for /api/people
-    with the complete lists of people
-    :return:        json string of list of people
+    Fungsi ini me-return semua director
+    Fungsi akan terpanggil melalui url /api/directors
+    dengan method get
     """
-    # Create the list of people from our data
+    # Query untuk semua directors diambil 10 data
     directors = Directors.query.order_by(Directors.id).limit(10)
 
-    # Serialize the data for the response
+    # Serialize list dari hasil query
     directors_schema = DirectorsSchema(many=True)
     data = directors_schema.dump(directors)
     return data
@@ -25,45 +24,47 @@ def read_all():
 
 def read_one(directors_id):
     """
-    This function responds to a request for /api/people/{person_id}
-    with one matching person from people
-    :param person_id:   Id of person to find
-    :return:            person matching id
+    Fungsi ini me-return director sesuai directors_id 
+    yang diberikan melalui url /api/directors/{directors_id}
+    dengan method get
+    Fungsi juga akan me-return status 200 jika ada datanya
+    dan akan melakukan abort dan status 404 jika tidak ada datanya
     """
-    # Build the initial query
+    # Query join directors dan movies
     directors = (
         Directors.query.filter(Directors.id == directors_id)
         .outerjoin(Movies)
         .one_or_none()
     )
 
-    # Did we find a person?
+    # Cek directors apakah ada
     if directors is not None:
 
-        # Serialize the data for the response
+        # Serialize list dari hasil query
         directors_schema = DirectorsSchema()
         data = directors_schema.dump(directors)
         return data
 
-    # Otherwise, nope, didn't find that person
+    # Return 404 jika tidak ada directors nya
     else:
         abort(404, f"Director not found for Id: {directors_id}")
 
 
 def create(directors):
     """
-    This function creates a new person in the people structure
-    based on the passed in person data
-    :param person:  person to create in people structure
-    :return:        201 on success, 406 on person exists
+    Fungsi ini akan membuat data director baru melalui
+    url /api/directors/{directors_id}/movies dengan method post
+    Request body nya berupa object directors tanpa atribut id dan movies
+    Fungsi akan me-return data director yang berhasil dibuat dan status code 201
+    dan fungsi akan melakukan abort dan me-return status 409 jika sudah ada data yang sama persis
     """
+    # Ambil data yang dikirim untuk dicek
     name = directors.get("name")
     gender = directors.get("gender")
     uid = directors.get("uid")
     department = directors.get("department")
 
-
-
+    # Object untuk cek apakah ada director dengan data yang sama
     existing_director = (
         Directors.query.filter(Directors.name == name)
         .filter(Directors.gender == gender)
@@ -72,78 +73,80 @@ def create(directors):
         .one_or_none()
     )
 
-    # Can we insert this person?
+    # Cek apakah sudah ada director dengan data yang sama
     if existing_director is None:
 
-        # Create a person instance using the schema and the passed in person
+        # Create director menggunakan schema
         schema = DirectorsSchema()
         new_directors = schema.load(directors, session=db.session)
 
-        # Add the person to the database
+        # Add data ke database
         db.session.add(new_directors)
         db.session.commit()
 
-        # Serialize and return the newly created person in the response
+        # Ambil data yang berhasil di-create
         data = schema.dump(new_directors)
 
         return data, 201
 
-    # Otherwise, nope, person exists already
+    # Jika sudah ada directors dengan data yang sama
     else:
         abort(409, f"Director {name} with {uid} in {department} department exists already")
 
 
 def update(directors_id, directors):
     """
-    This function updates an existing person in the people structure
-    :param person_id:   Id of the person to update in the people structure
-    :param person:      person to update
-    :return:            updated person structure
+    Fungsi ini akan melakukan update data director sesuai dengan directors_id yang diberikan melalui
+    url /api/directors/{directors_id} dengan method put
+    Request body nya berupa object directors tanpa atribut id dan movies
+    Fungsi akan me-return data director yang berhasil diupdate dan status code 200
+    dan fungsi akan melakukan abort dan status 404 jika data tidak ditemukan
     """
-    # Get the person requested from the db into session
+    # Query untuk get data director sesuai id
     update_directors = Directors.query.filter(
         Directors.id == directors_id
     ).one_or_none()
 
-    # Did we find an existing person?
+    # Cek apakah ada datanya
     if update_directors is not None:
 
-        # turn the passed in person into a db object
+        # Ambil datanya dan diubah dalam bentuk db object
         schema = DirectorsSchema()
         update = schema.load(directors, session=db.session)
 
-        # Set the id to the person we want to update
+        # Set id director sesuai dengan yang mau di-update
         update.id = update_directors.id
 
-        # merge the new object into the old and commit it to the db
+        # Update datanya
         db.session.merge(update)
         db.session.commit()
 
-        # return updated person in the response
+        # Ambil data yang berhasil di-update
         data = schema.dump(update_directors)
 
         return data, 200
 
-    # Otherwise, nope, didn't find that person
+    # Return 404 jika tidak ada directors nya
     else:
         abort(404, f"Director not found for Id: {directors_id}")
 
 
 def delete(directors_id):
     """
-    This function deletes a person from the people structure
-    :param person_id:   Id of the person to delete
-    :return:            200 on successful delete, 404 if not found
+    Fungsi ini akan melakukan delete data director dengan directors_id sesuai dengan yang diberikan melalui
+    url /api/directors/{directors_id} dengan method delete
+    Fungsi akan me-return message dan status code 200 jika berhasil di-delete
+    dan fungsi akan melakukan abort dan status 404 jika data tidak ditemukan
     """
-    # Get the person requested
+    # Query untuk get data director sesuai id
     directors = Directors.query.filter(Directors.id == directors_id).one_or_none()
 
-    # Did we find a person?
+    # Cek apakah ada datanya
     if directors is not None:
         db.session.delete(directors)
         db.session.commit()
         return make_response(f"Director with id {directors_id} deleted", 200)
 
-    # Otherwise, nope, didn't find that person
+    # Return 404 jika tidak ada directors nya
     else:
         abort(404, f"Director not found for Id: {directors_id}")
